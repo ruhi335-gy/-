@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Birthday Surprise</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<div class="form-container" role="form" aria-labelledby="form-title">
+  <h2 id="form-title">🎉 Enter Birthday Info</h2>
+  <form id="birthday-form">
+    <label for="name" class="visually-hidden">Your Name</label>
+    <input type="text" id="name" placeholder="Your Name" required aria-required="true" aria-describedby="name-desc" />
+    <div id="name-desc" class="visually-hidden">Please enter your name</div>
+
+    <label for="birthdate" class="visually-hidden">Birthdate</label>
+    <input type="date" id="birthdate" required aria-required="true" aria-describedby="birthdate-desc" />
+    <div id="birthdate-desc" class="visually-hidden">Please enter your birthdate</div>
+
+    <button type="submit" aria-label="Submit birthday information">Submit</button>
+  </form>
+</div>
+
+<!-- Popup 1 -->
+<div class="popup full" id="popup-1" role="dialog" aria-modal="true" aria-labelledby="birthday-message" tabindex="-1">
+  <div class="popup-content center" tabindex="0">
+    <h1 id="birthday-message" aria-live="polite"></h1>
+    <button id="celebrate-btn" aria-label="Celebrate birthday">Celebrate 🎈</button>
+  </div>
+</div>
+
+<!-- Popup 2: Cake -->
+<div class="popup full transparent" id="popup-2" role="dialog" aria-modal="true" tabindex="-1">
+  <div class="popup-content center" tabindex="0">
+    <svg id="cake" viewBox="0 0 300 300" width="90%" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+      <ellipse id="plate" class="cake-part" cx="150" cy="270" rx="100" ry="10" fill="#ccc"/>
+      <rect id="base" class="cake-part" x="75" y="150" width="150" height="80" rx="20" fill="#f7b05b"/>
+      <path id="frosting" class="cake-part" d="M75 150 Q100 140 115 150 T150 150 T185 150 T225 150 Q225 130 225 150" fill="#fff3cd"/>
+      <rect id="middle" class="cake-part" x="85" y="110" width="130" height="50" rx="15" fill="#ec6f66"/>
+      <rect id="top" class="cake-part" x="100" y="80" width="100" height="40" rx="10" fill="#f9d5e5"/>
+      <text id="cake-name" x="150" y="170" font-size="18" fill="#fff" text-anchor="middle" opacity="0"></text>
+      <rect id="candle1" class="cake-part" x="125" y="50" width="6" height="30" fill="#6c5ce7"/>
+      <rect id="candle2" class="cake-part" x="145" y="50" width="6" height="30" fill="#00cec9"/>
+      <rect id="candle3" class="cake-part" x="165" y="50" width="6" height="30" fill="#fd79a8"/>
+      <circle id="flame1" class="flame cake-part" cx="128" cy="48" r="6" fill="orange"/>
+      <circle id="flame2" class="flame cake-part" cx="148" cy="48" r="6" fill="orange"/>
+      <circle id="flame3" class="flame cake-part" cx="168" cy="48" r="6" fill="orange"/>
+    </svg>
+  </div>
+</div>
+
+<!-- Popup 3: Song -->
+<div class="popup full transparent" id="popup-3" role="dialog" aria-modal="true" tabindex="-1">
+  <div class="popup-content center song" tabindex="0">
+    <h2 class="line">Happy birthday to you,</h2>
+    <h2 class="line">Happy birthday to you,</h2>
+    <h2 class="line">Happy birthday dear <span id="user-name">Friend</span>,</h2>
+    <h2 class="line">Happy birthday to you!</h2>
+    <!-- ✅ Thank You button here -->
+    <button id="thankyou-btn" aria-label="Send thank you message via WhatsApp">Thank You 🙏</button>
+  </div>
+</div>
+
+<!-- Audio elements -->
+<audio id="birthday-audio" src="openai-fm-nova-friendly.wav" preload="auto"></audio>
+<audio id="bg-music" src="happy-birthday-to-you-bossa-nova-style-arrangement-21399.mp3" preload="auto" loop></audio>
+
+<!-- Footer -->
+<footer class="footer">Created by GK</footer>
+
+<!-- Scripts -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="script.js"></script>
+
+<!-- Visually hidden helper class -->
+<style>
+  .visually-hidden {
+    position: absolute !important;
+    width: 1px !important;
+    height: 1px !important;
+    padding: 0 !important;
+    margin: -1px !important;
+    overflow: hidden !important;
+    clip: rect(0,0,0,0) !important;
+    border: 0 !important;
+  }
+</style>
+
+</body>
+</html>
