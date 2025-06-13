@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Photo & Video Uploader</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div id="appContainer">
+    <!-- AUTH SECTION -->
+    <section id="authSection">
+      <div class="auth-tabs">
+        <button id="loginTabBtn" class="active" onclick="showAuthForm('login')">Login</button>
+        <button id="signupTabBtn" onclick="showAuthForm('signup')">Sign Up</button>
+      </div>
+
+      <form id="loginForm" onsubmit="event.preventDefault(); signIn();">
+        <input type="email" id="loginEmail" placeholder="Email" required />
+        <div class="password-field">
+          <input type="password" id="loginPassword" placeholder="Password" required minlength="6" />
+          <button type="button" class="toggle-pass-btn" onclick="togglePassword('loginPassword', this)">Show</button>
+        </div>
+        <button type="submit" class="btn primary-btn">Login</button>
+      </form>
+
+      <form id="signupForm" onsubmit="event.preventDefault(); openSignupPopup();" style="display:none;">
+        <input type="email" id="signupEmail" placeholder="Email" required />
+        <div class="password-field">
+          <input type="password" id="signupPassword" placeholder="Password (min 6 chars)" required minlength="6" />
+          <button type="button" class="toggle-pass-btn" onclick="togglePassword('signupPassword', this)">Show</button>
+        </div>
+        <button type="submit" class="btn primary-btn">Sign Up</button>
+      </form>
+    </section>
+
+    <!-- USER SECTION -->
+    <section id="userSection" style="display:none;">
+      <header>
+        <div class="user-info">
+          <img id="userProfilePic" src="https://via.placeholder.com/40?text=User" alt="Profile Pic" />
+          <span id="userEmail"></span>
+        </div>
+        <button onclick="signOut()" class="btn secondary-btn">Logout</button>
+      </header>
+
+      <nav class="media-tabs">
+        <button id="tabPhotos" class="active" onclick="filterMedia('photo')">Photos</button>
+        <button id="tabVideos" onclick="filterMedia('video')">Videos</button>
+        <button id="tabAll" onclick="filterMedia('all')">All</button>
+        <button id="tabAccount" onclick="showAccountTab()">Account</button>
+      </nav>
+
+      <!-- UPLOAD SECTION -->
+      <section id="uploadSection">
+        <input type="file" id="fileInput" accept="image/*,video/*" />
+        <button class="btn primary-btn" onclick="uploadFile()">Upload</button>
+      </section>
+
+      <!-- MEDIA DISPLAY -->
+      <section id="fileList" class="media-gallery"></section>
+
+      <!-- ACCOUNT TAB -->
+      <section id="accountTab" style="display:none;">
+        <h2>Your Account</h2>
+        <img id="userProfilePicLarge" src="https://via.placeholder.com/80?text=User" alt="Profile Pic" />
+        <p><strong>Email:</strong> <span id="accountEmail"></span></p>
+        <p><strong>Name:</strong> <span id="accountName"></span></p>
+        <p><strong>Gender:</strong> <span id="accountGender"></span></p>
+        <div class="account-buttons">
+          <button class="btn" onclick="openEditProfilePopup()">Edit Profile</button>
+          <button class="btn" onclick="openChangePasswordPopup()">Change Password</button>
+          <button class="btn" onclick="alert('Photo & Video Uploader v1.0\nBuilt with Firebase & Cloudinary')">About</button>
+        </div>
+      </section>
+    </section>
+
+    <!-- POPUPS -->
+
+    <!-- Signup Profile Completion -->
+    <div id="signupPopup" class="popupOverlay" style="display:none;">
+      <div class="popupContent">
+        <span class="popupClose" onclick="closeSignupPopup()">&times;</span>
+        <h3>Complete Your Profile</h3>
+        <input type="text" id="signupName" placeholder="Your Name" />
+        <select id="signupGender">
+          <option value="" disabled selected>Select Gender</option>
+          <option value="Male">Male</option>
+          <option value="Female">Female</option>
+          <option value="Other">Other</option>
+          <option value="Prefer not to say">Prefer not to say</option>
+        </select>
+        <label for="signupProfilePicInput">Profile Picture:</label><br />
+        <input type="file" id="signupProfilePicInput" accept="image/*" /><br />
+        <img id="signupProfilePreview" alt="Profile Preview" />
+        <button class="btn primary-btn" onclick="completeSignup()">Complete Signup</button>
+      </div>
+    </div>
+
+    <!-- Edit Profile Popup -->
+    <div id="editProfilePopup" class="popupOverlay" style="display:none;">
+      <div class="popupContent">
+        <span class="popupClose" onclick="closeEditProfilePopup()">&times;</span>
+        <h3>Edit Profile</h3>
+        <input type="text" id="editName" placeholder="Your Name" />
+        <select id="editGender">
+          <option value="" disabled>Select Gender</option>
+          <option value="Male">Male</option>
+          <option value="Female">Female</option>
+          <option value="Other">Other</option>
+          <option value="Prefer not to say">Prefer not to say</option>
+        </select>
+        <label for="editProfilePicInput">Profile Picture:</label><br />
+        <input type="file" id="editProfilePicInput" accept="image/*" /><br />
+        <img id="editProfilePreview" alt="Profile Preview" />
+        <button class="btn primary-btn" onclick="saveProfileChanges()">Save Changes</button>
+      </div>
+    </div>
+
+    <!-- Change Password Popup -->
+    <div id="changePasswordPopup" class="popupOverlay" style="display:none;">
+      <div class="popupContent">
+        <span class="popupClose" onclick="closeChangePasswordPopup()">&times;</span>
+        <h3>Change Password</h3>
+        <input type="password" id="oldPassword" placeholder="Old Password" />
+        <input type="password" id="newPassword" placeholder="New Password (min 6 chars)" />
+        <input type="password" id="confirmPassword" placeholder="Confirm New Password" />
+        <button class="btn primary-btn" onclick="changeUserPassword()">Change Password</button>
+      </div>
+    </div>
+
+    <!-- Media Popup -->
+    <div id="mediaPopup" class="popupOverlay" style="display:none;" onclick="closeMediaPopup(event)">
+      <span class="popupClose" onclick="closeMediaPopup(event)">&times;</span>
+      <img id="popupImg" />
+      <video id="popupVid" controls></video>
+    </div>
+
+    <!-- Fullscreen Video Popup -->
+    <div id="videoFullscreenPopup" class="popupOverlay" style="display:none;" onclick="closeFullscreenVideo(event)">
+      <video id="fullscreenVideo" controls></video>
+      <span class="popupClose" onclick="closeFullscreenVideo(event)">&times;</span>
+    </div>
+
+  </div>
+
+  <script type="module" src="script.js"></script>
+</body>
+</html>
