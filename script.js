@@ -29,16 +29,16 @@ import {
 } from "https://www.gstatic.com/firebasejs/10.3.0/firebase-firestore.js";
 
 const firebaseConfig = {
-  apiKey: "YOUR_API_KEY_HERE",
-  authDomain: "YOUR_AUTH_DOMAIN",
-  projectId: "YOUR_PROJECT_ID",
-  storageBucket: "YOUR_STORAGE_BUCKET",
-  messagingSenderId: "YOUR_MSG_SENDER_ID",
-  appId: "YOUR_APP_ID"
+  apiKey: "AIzaSyAJk-mOOv8fJut5KcPJU_ZsBr1Qj0fCWcs",
+    authDomain: "photouploader-5f0a2.firebaseapp.com",
+    projectId: "photouploader-5f0a2",
+    storageBucket: "photouploader-5f0a2.firebasestorage.app",
+    messagingSenderId: "666027306241",
+    appId: "1:666027306241:web:e3f1e7fa18f27a5b05bf00",
 };
 
-const cloudName = "YOUR_CLOUDINARY_CLOUD_NAME";
-const uploadPreset = "YOUR_CLOUDINARY_UPLOAD_PRESET";
+const cloudName = "dqe6v0c2m";
+const uploadPreset = "unsigned_preset1";
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
