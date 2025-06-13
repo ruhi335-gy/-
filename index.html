@@ -1,82 +1,171 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
   <meta charset="UTF-8">
-  <title>Save Photo in Browser</title>
+  <title>Photo Manager</title>
+  <style>
+    body { font-family: Arial; padding: 20px; }
+    img { max-width: 200px; margin: 10px; display: block; }
+    .photo-box { border: 1px solid #ccc; padding: 10px; margin-bottom: 15px; display: inline-block; }
+  </style>
 </head>
 <body>
-  <h2>Upload Photo to Local Storage (IndexedDB)</h2>
-  <input type="file" id="photoInput" accept="image/*">
-  <br><br>
-  <img id="preview" width="200" style="display:none;">
-  <br><br>
-  <button onclick="savePhoto()">Save to Browser</button>
+  <h2>Photo Manager (Browser Based)</h2>
+
+  <!-- Login Form -->
+  <div id="authSection">
+    <input type="text" id="username" placeholder="Enter username">
+    <button onclick="signUp()">Sign Up</button>
+    <button onclick="signIn()">Sign In</button>
+  </div>
+
+  <!-- Logged-in Section -->
+  <div id="mainApp" style="display:none;">
+    <h3>Welcome, <span id="currentUser"></span>!</h3>
+    <input type="file" id="photoInput" accept="image/*">
+    <button onclick="savePhoto()">Save Photo</button>
+    <h4>Your Photos:</h4>
+    <div id="photoList"></div>
+    <button onclick="logout()">Log Out</button>
+  </div>
 
   <script>
-    let selectedFile;
-
-    // Listen for file input
-    document.getElementById('photoInput').addEventListener('change', function (event) {
-      selectedFile = event.target.files[0];
-
-      const reader = new FileReader();
-      reader.onload = function (e) {
-        const img = document.getElementById('preview');
-        img.src = e.target.result;
-        img.style.display = 'block';
-      };
-      reader.readAsDataURL(selectedFile);
-    });
-
-    // Initialize IndexedDB
-    const dbName = "PhotoStorageDB";
     let db;
+    let currentUser = null;
 
-    const request = indexedDB.open(dbName, 1);
+    const request = indexedDB.open("PhotoAppDB", 1);
 
-    request.onerror = function () {
-      console.error("Database failed to open");
+    request.onupgradeneeded = function (e) {
+      db = e.target.result;
+      if (!db.objectStoreNames.contains("photos")) {
+        db.createObjectStore("photos", { keyPath: "id", autoIncrement: true });
+      }
     };
 
     request.onsuccess = function () {
       db = request.result;
-      console.log("Database opened");
+      checkSession();
     };
 
-    request.onupgradeneeded = function (e) {
-      db = e.target.result;
-      db.createObjectStore("photos", { keyPath: "id", autoIncrement: true });
-      console.log("Database setup complete");
-    };
+    function checkSession() {
+      const user = localStorage.getItem("loggedInUser");
+      if (user) {
+        currentUser = user;
+        showMainApp();
+        loadPhotos();
+      }
+    }
+
+    function signUp() {
+      const username = document.getElementById("username").value.trim();
+      if (!username) return alert("Enter username");
+      localStorage.setItem("loggedInUser", username);
+      currentUser = username;
+      showMainApp();
+      loadPhotos();
+    }
+
+    function signIn() {
+      const username = document.getElementById("username").value.trim();
+      if (!username) return alert("Enter username");
+      if (localStorage.getItem("loggedInUser") === username || true) {
+        localStorage.setItem("loggedInUser", username);
+        currentUser = username;
+        showMainApp();
+        loadPhotos();
+      } else {
+        alert("User not found. Please Sign Up.");
+      }
+    }
+
+    function logout() {
+      localStorage.removeItem("loggedInUser");
+      location.reload();
+    }
+
+    function showMainApp() {
+      document.getElementById("authSection").style.display = "none";
+      document.getElementById("mainApp").style.display = "block";
+      document.getElementById("currentUser").innerText = currentUser;
+    }
 
     function savePhoto() {
-      if (!selectedFile) {
-        alert("Please choose a photo first.");
-        return;
-      }
+      const file = document.getElementById("photoInput").files[0];
+      if (!file) return alert("Choose a photo");
 
       const reader = new FileReader();
       reader.onload = function (e) {
-        const transaction = db.transaction(["photos"], "readwrite");
-        const store = transaction.objectStore("photos");
-
         const photo = {
-          name: selectedFile.name,
+          username: currentUser,
+          name: file.name,
           dataUrl: e.target.result,
           time: new Date()
         };
 
-        const addRequest = store.add(photo);
+        const tx = db.transaction("photos", "readwrite");
+        const store = tx.objectStore("photos");
+        store.add(photo);
 
-        addRequest.onsuccess = function () {
-          alert("Photo saved in browser!");
-        };
-
-        addRequest.onerror = function () {
-          console.error("Error saving photo");
+        tx.oncomplete = () => {
+          loadPhotos();
+          document.getElementById("photoInput").value = "";
         };
       };
-      reader.readAsDataURL(selectedFile);
+      reader.readAsDataURL(file);
+    }
+
+    function loadPhotos() {
+      const photoList = document.getElementById("photoList");
+      photoList.innerHTML = "";
+
+      const tx = db.transaction("photos", "readonly");
+      const store = tx.objectStore("photos");
+
+      store.openCursor().onsuccess = function (e) {
+        const cursor = e.target.result;
+        if (cursor) {
+          const photo = cursor.value;
+          if (photo.username === currentUser) {
+            const div = document.createElement("div");
+            div.className = "photo-box";
+
+            const img = document.createElement("img");
+            img.src = photo.dataUrl;
+
+            const name = document.createElement("p");
+            name.textContent = photo.name;
+
+            const downloadBtn = document.createElement("button");
+            downloadBtn.textContent = "Download";
+            downloadBtn.onclick = () => downloadPhoto(photo);
+
+            const deleteBtn = document.createElement("button");
+            deleteBtn.textContent = "Delete";
+            deleteBtn.onclick = () => deletePhoto(cursor.key);
+
+            div.appendChild(img);
+            div.appendChild(name);
+            div.appendChild(downloadBtn);
+            div.appendChild(deleteBtn);
+            photoList.appendChild(div);
+          }
+          cursor.continue();
+        }
+      };
+    }
+
+    function deletePhoto(id) {
+      const tx = db.transaction("photos", "readwrite");
+      const store = tx.objectStore("photos");
+      store.delete(id);
+      tx.oncomplete = loadPhotos;
+    }
+
+    function downloadPhoto(photo) {
+      const a = document.createElement("a");
+      a.href = photo.dataUrl;
+      a.download = photo.name;
+      a.click();
     }
   </script>
 </body>
