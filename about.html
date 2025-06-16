@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>G.K GAMES</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #e3f2fd;
+      margin: 0;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      color: #222;
+      user-select: none;
+      min-height: 100vh;
+      position: relative;
+      padding-bottom: 60px; /* space for footer */
+      box-sizing: border-box;
+    }
+
+    h1 {
+      margin-bottom: 5px;
+      color: #1565c0;
+      font-size: 2rem;
+      text-align: center;
+    }
+
+    #status, #opponentName {
+      margin: 10px 0;
+      font-weight: 600;
+      font-size: 1.1rem;
+      color: #0d47a1;
+      text-align: center;
+      word-break: break-word;
+    }
+
+    #board {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      grid-template-rows: repeat(3, 1fr);
+      gap: 10px;
+      margin: 15px 0;
+      user-select: none;
+      width: 320px;
+      max-width: 90vw;
+      aspect-ratio: 1 / 1;
+      box-shadow: 0 0 8px #1565c0aa;
+      border-radius: 15px;
+      background: #bbdefb;
+      padding: 10px;
+    }
+
+    .cell {
+      background: #e3f2fd;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 3rem;
+      font-weight: 700;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: background-color 0.2s ease;
+      box-shadow: 0 4px 6px rgb(21 101 192 / 0.5);
+      user-select: none;
+    }
+
+    .cell:hover {
+      background: #90caf9;
+    }
+
+    .cell:active {
+      background: #64b5f6;
+    }
+
+    button {
+      margin: 10px 5px 0 5px;
+      padding: 12px 25px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      color: white;
+      background: #1565c0;
+      box-shadow: 0 4px 8px rgb(21 101 192 / 0.7);
+      transition: background-color 0.25s ease;
+      min-width: 120px;
+      user-select: none;
+    }
+
+    button:hover {
+      background: #0d47a1;
+    }
+
+    input[type="text"] {
+      width: 90%;
+      margin: 8px 0;
+      padding: 12px 15px;
+      font-size: 1rem;
+      border-radius: 8px;
+      border: 1px solid #90caf9;
+      outline: none;
+      transition: border-color 0.3s;
+      box-sizing: border-box;
+    }
+
+    input[type="text"]:focus {
+      border-color: #1565c0;
+      box-shadow: 0 0 8px #90caf9;
+    }
+
+    #createRoomPopup, #popup {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: white;
+      padding: 25px 30px;
+      border-radius: 15px;
+      box-shadow: 0 8px 20px rgb(0 0 0 / 0.2);
+      z-index: 1001;
+      display: none;
+      width: 320px;
+      max-width: 90vw;
+      text-align: center;
+      color: #1565c0;
+      box-sizing: border-box;
+    }
+
+    #joinRoomSection {
+      margin-top: 20px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+      width: 100%;
+      max-width: 400px;
+    }
+
+    #joinRoomSection input {
+      max-width: 220px;
+      flex-grow: 1;
+    }
+
+    #btn-feedback {
+      background: #4caf50;
+    }
+
+    #btn-feedback:hover {
+      background: #388e3c;
+    }
+
+    #overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.35);
+      z-index: 1000;
+      display: none;
+    }
+
+    /* Footer styling */
+    footer {
+      margin-top: 40px;
+      font-size: 0.9rem;
+      color: #1565c0;
+      font-weight: 600;
+      position: absolute;
+      bottom: 10px;
+      user-select: none;
+      width: 100%;
+      text-align: center;
+    }
+
+    /* Responsive tweaks */
+    @media (max-width: 400px) {
+      h1 {
+        font-size: 1.6rem;
+      }
+      #status, #opponentName {
+        font-size: 1rem;
+        padding: 0 10px;
+      }
+      button {
+        font-size: 1rem;
+        min-width: 100px;
+        padding: 10px 15px;
+      }
+      input[type="text"] {
+        font-size: 0.95rem;
+        padding: 10px 12px;
+      }
+      #board {
+        width: 90vw;
+        gap: 6px;
+        padding: 8px;
+      }
+      .cell {
+        font-size: 2.4rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <h1>Online Tic Tac Toe</h1>
+
+  <div id="createRoomSection">
+    <input type="text" id="playerNameInput" placeholder="Enter your name" maxlength="20" />
+    <input type="text" id="roomCodeInput" placeholder="Enter room code" maxlength="10" />
+    <button id="btnCreateRoom">Create Room</button>
+    <button id="btnJoinRoom">Join Room</button>
+  </div>
+
+  <div id="status">Please create or join a room</div>
+  <div id="opponentName"></div>
+
+  <div id="board" style="display:none;">
+    <!-- 9 cells for the board -->
+    <div class="cell" data-index="0"></div>
+    <div class="cell" data-index="1"></div>
+    <div class="cell" data-index="2"></div>
+    <div class="cell" data-index="3"></div>
+    <div class="cell" data-index="4"></div>
+    <div class="cell" data-index="5"></div>
+    <div class="cell" data-index="6"></div>
+    <div class="cell" data-index="7"></div>
+    <div class="cell" data-index="8"></div>
+  </div>
+
+  <!-- Popup for winner, play again, feedback -->
+  <div id="popup">
+    <p id="popupMsg"></p>
+    <button id="btn-replay">Play Again</button>
+    <button id="btn-confirm" style="display:none;">Yes</button>
+    <button id="btn-reject" style="display:none;">No</button>
+    <button id="btn-feedback">Feedback</button>
+  </div>
+
+  <div id="overlay"></div>
+
+  <!-- Click sound -->
+  <audio id="clickSound" src="select-001-337218.mp3" preload="auto"></audio>
+
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+
+  <script>
+    // TODO: Replace with your Firebase config
+   const firebaseConfig = {
+  apiKey: "AIzaSyBNpThlmHtIDt_mICPHqG34ZNLin0oMD-Q",
+  authDomain: "tic-tok-1a34a.firebaseapp.com",
+  databaseURL: "https://tic-tok-1a34a-default-rtdb.firebaseio.com",
+  projectId: "tic-tok-1a34a",
+  storageBucket: "tic-tok-1a34a.firebasestorage.app",
+  messagingSenderId: "397851490897",
+  appId: "1:397851490897:web:6e6eba5eda9d68ac0d9670"
+};
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
+    // Game variables
+    const emptyBoard = ["", "", "", "", "", "", "", "", ""];
+    let currentRoom = null;
+    let player = null; // "X" or "O"
+    let playerNameGlobal = null;
+    let gameOver = false;
+
+    // DOM elements
+    const board = document.getElementById("board");
+    const cells = document.querySelectorAll(".cell");
+    const status = document.getElementById("status");
+    const opponentNameDiv = document.getElementById("opponentName");
+    const popup = document.getElementById("popup");
+    const popupMsg = document.getElementById("popupMsg");
+    const overlay = document.getElementById("overlay");
+
+    // Buttons inside popup
+    const btnReplay = document.getElementById("btn-replay");
+    const btnConfirm = document.getElementById("btn-confirm");
+    const btnReject = document.getElementById("btn-reject");
+    const btnFeedback = document.getElementById("btn-feedback");
+
+    // Room create/join elements
+    const playerNameInput = document.getElementById("playerNameInput");
+    const roomCodeInput = document.getElementById("roomCodeInput");
+    const btnCreateRoom = document.getElementById("btnCreateRoom");
+    const btnJoinRoom = document.getElementById("btnJoinRoom");
+    const createRoomSection = document.getElementById("createRoomSection");
+
+    // Add event listeners
+    btnCreateRoom.addEventListener("click", createRoom);
+    btnJoinRoom.addEventListener("click", joinRoom);
+    btnReplay.addEventListener("click", resetBoard);
+    btnConfirm.addEventListener("click", () => confirmPlayAgain(true));
+    btnReject.addEventListener("click", () => confirmPlayAgain(false));
+    btnFeedback.addEventListener("click", giveFeedback);
+    overlay.addEventListener("click", closeAllPopups);
+
+    cells.forEach(cell => {
+      cell.addEventListener("click", () => {
+        if (!gameOver && currentRoom && player) {
+          makeMove(parseInt(cell.dataset.index));
+        }
+      });
+    });
+
+    function createRoom() {
+      const playerName = playerNameInput.value.trim();
+      const roomCode = roomCodeInput.value.trim();
+
+      if (!playerName || !roomCode) {
+        alert("Please enter both name and room code.");
+        return;
+      }
+
+      const roomRef = db.ref("rooms/" + roomCode);
+      roomRef.once("value").then(snapshot => {
+        if (snapshot.exists()) {
+          alert("Room already exists. Choose a different code.");
+        } else {
+          roomRef.set({
+            board: emptyBoard,
+            current: "X",
+            winner: "",
+            playAgainRequest: "none",
+            lastRequester: "",
+            playerXName: playerName,
+            playerOName: ""
+          }).then(() => {
+            currentRoom = roomCode;
+            player = "X";
+            playerNameGlobal = playerName;
+            gameOver = false;
+            hideRoomUI();
+            showBoard();
+            listenForUpdates();
+          });
+        }
+      });
+    }
+
+    function joinRoom() {
+      const playerName = playerNameInput.value.trim();
+      const roomCode = roomCodeInput.value.trim();
+
+      if (!playerName || !roomCode) {
+        alert("Please enter both name and room code.");
+        return;
+      }
+
+      const roomRef = db.ref("rooms/" + roomCode);
+      roomRef.once("value").then(snapshot => {
+        if (!snapshot.exists()) {
+          alert("Room does not exist.");
+        } else {
+          const game = snapshot.val();
+          if (game.playerOName) {
+            alert("Room is full.");
+          } else {
+            roomRef.update({ playerOName: playerName }).then(() => {
+              currentRoom = roomCode;
+              player = "O";
+              playerNameGlobal = playerName;
+              gameOver = false;
+              hideRoomUI();
+              showBoard();
+              listenForUpdates();
+            });
+          }
+        }
+      });
+    }
+
+    function hideRoomUI() {
+      createRoomSection.style.display = "none";
+    }
+
+    function showBoard() {
+      board.style.display = "grid";
+      updateStatus();
+    }
+
+    function listenForUpdates() {
+      if (!currentRoom) return;
+      const roomRef = db.ref("rooms/" + currentRoom);
+      roomRef.on("value", snapshot => {
+        const game = snapshot.val();
+        if (!game) return;
+
+        updateBoard(game.board);
+        updateStatus(game);
+        handlePlayAgainPopup(game);
+      });
+    }
+
+    function updateBoard(boardArr) {
+      cells.forEach((cell, idx) => {
+        cell.textContent = boardArr[idx];
+      });
+    }
+
+    function updateStatus(game) {
+      if (!game) {
+        status.textContent = "Please create or join a room";
+        opponentNameDiv.textContent = "";
+        return;
+      }
+
+      const { current, winner, playerXName, playerOName } = game;
+      const opponentName = (player === "X") ? playerOName : playerXName;
+
+      opponentNameDiv.textContent = opponentName
+        ? `Opponent: ${opponentName}`
+        : "Waiting for opponent to join...";
+
+      if (winner) {
+        if (winner === "draw") {
+          status.textContent = "Game Draw!";
+        } else {
+          const winnerName = winner === "X" ? playerXName || "Player X" : playerOName || "Player O";
+          status.textContent = `${winnerName} wins!`;
+        }
+        gameOver = true;
+      } else {
+        if (current === player) {
+          status.textContent = `Your turn (${playerNameGlobal || player})`;
+        } else {
+          status.textContent = `Waiting for opponent's move`;
+        }
+        gameOver = false;
+      }
+    }
+
+    function makeMove(idx) {
+      if (gameOver) return;
+      const roomRef = db.ref("rooms/" + currentRoom);
+      roomRef.once("value").then(snapshot => {
+        const game = snapshot.val();
+        if (!game) return;
+        if (game.board[idx] !== "" || game.current !== player || game.winner) {
+          return; // invalid move
+        }
+
+        playClickSound();
+
+        const newBoard = [...game.board];
+        newBoard[idx] = player;
+
+        const winner = checkWinner(newBoard);
+        const nextTurn = player === "X" ? "O" : "X";
+
+        roomRef.update({
+          board: newBoard,
+          current: winner ? "" : nextTurn,
+          winner: winner || "",
+          playAgainRequest: "none",
+          lastRequester: ""
+        });
+      });
+    }
+
+    function checkWinner(bd) {
+      const lines = [
+        [0,1,2], [3,4,5], [6,7,8], // rows
+        [0,3,6], [1,4,7], [2,5,8], // cols
+        [0,4,8], [2,4,6]           // diagonals
+      ];
+      for (const [a,b,c] of lines) {
+        if (bd[a] && bd[a] === bd[b] && bd[a] === bd[c]) {
+          return bd[a];
+        }
+      }
+      if (bd.every(cell => cell !== "")) {
+        return "draw";
+      }
+      return null;
+    }
+
+    function resetBoard() {
+      if (!currentRoom || !player) return;
+
+      const roomRef = db.ref("rooms/" + currentRoom);
+      roomRef.once("value").then(snapshot => {
+        const game = snapshot.val();
+        if (game.playAgainRequest === "none") {
+          roomRef.update({ playAgainRequest: "requested", lastRequester: player });
+          alert("Play Again request sent to opponent. Waiting for response...");
+          closePopup();
+        } else {
+          alert("Play Again request already pending.");
+          closePopup();
+        }
+      });
+    }
+
+    function handlePlayAgainPopup(game) {
+      if (!player) return;
+
+      if (game.playAgainRequest === "requested") {
+        // Show popup to the player who didn't initiate play again
+        if ((player === "X" && game.lastRequester === "O") || (player === "O" && game.lastRequester === "X")) {
+          popupMsg.textContent = "Opponent wants to play again. Accept?";
+          btnConfirm.style.display = "inline-block";
+          btnReject.style.display = "inline-block";
+          btnReplay.style.display = "none";
+          btnFeedback.style.display = "none";
+          showPopup();
+        }
+      } else if (game.winner) {
+        // Show winner popup to both players
+        let msg = "";
+        if (game.winner === "draw") {
+          msg = "It's a draw!";
+        } else {
+          const winnerName = (game.winner === "X") ? game.playerXName || "Player X" : game.playerOName || "Player O";
+          msg = `${winnerName} wins!`;
+        }
+        popupMsg.textContent = msg;
+        btnReplay.style.display = "inline-block";
+        btnConfirm.style.display = "none";
+        btnReject.style.display = "none";
+        btnFeedback.style.display = "inline-block";
+        showPopup();
+      } else {
+        // No winner and no playAgain request, hide popup
+        closePopup();
+      }
+    }
+
+    function confirmPlayAgain(isConfirmed) {
+      if (!currentRoom || !player) return;
+      const roomRef = db.ref("rooms/" + currentRoom);
+
+      if (isConfirmed) {
+        roomRef.update({
+          board: emptyBoard,
+          current: "X",
+          winner: "",
+          playAgainRequest: "none",
+          lastRequester: ""
+        });
+        gameOver = false;
+        closePopup();
+      } else {
+        roomRef.update({ playAgainRequest: "none", lastRequester: "" });
+        popupMsg.textContent = "You rejected the Play Again request. You can give feedback.";
+        btnConfirm.style.display = "none";
+        btnReject.style.display = "none";
+        btnReplay.style.display = "none";
+        btnFeedback.style.display = "inline-block";
+      }
+    }
+
+    function giveFeedback() {
+      // Open Instagram DM link for username it_lonely.boy
+      window.open("https://instagram.com/it_lonely.boy", "_blank");
+    }
+
+    function showPopup() {
+      popup.style.display = "block";
+      overlay.style.display = "block";
+    }
+
+    function closePopup() {
+      popup.style.display = "none";
+      overlay.style.display = "none";
+    }
+
+    function closeAllPopups() {
+      closePopup();
+    }
+
+    function playClickSound() {
+      const audio = document.getElementById("clickSound");
+      if (audio) {
+        audio.currentTime = 0;
+        audio.play();
+      }
+    }
+  </script>
+
+  <footer>Created by G.K</footer>
+</body>
+</html>
