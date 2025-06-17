@@ -1,0 +1,186 @@
+body {
+  font-family: 'Segoe UI', sans-serif;
+  background: #e3f2fd;
+  margin: 0;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 100vh;
+  padding-bottom: 80px;
+  box-sizing: border-box;
+  color: #222;
+}
+
+h1 {
+  color: #1565c0;
+  font-size: 2rem;
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+#status,
+#opponentName {
+  font-weight: bold;
+  margin-top: 10px;
+  color: #0d47a1;
+  text-align: center;
+  font-size: 1.1rem;
+}
+
+#board {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin: 15px 0;
+  width: 100%;
+  max-width: 320px;
+  aspect-ratio: 1;
+  background: #bbdefb;
+  padding: 10px;
+  border-radius: 12px;
+  box-shadow: 0 0 10px #1565c088;
+}
+
+.cell {
+  background: #e3f2fd;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 2.5rem;
+  font-weight: bold;
+  border-radius: 10px;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(21, 101, 192, 0.4);
+  transition: background 0.2s;
+}
+
+.cell:hover {
+  background-color: #90caf9;
+}
+
+input[type="text"] {
+  padding: 10px;
+  font-size: 1rem;
+  margin: 5px;
+  border-radius: 8px;
+  border: 1px solid #90caf9;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+button {
+  padding: 10px 20px;
+  margin: 5px;
+  background: #1565c0;
+  color: white;
+  font-weight: bold;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  min-width: 100px;
+}
+
+button:hover {
+  background: #0d47a1;
+}
+
+#popup,
+#overlay {
+  position: fixed;
+  display: none;
+}
+
+#popup {
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  z-index: 1001;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  max-width: 90vw;
+  box-sizing: border-box;
+  text-align: center;
+}
+
+#overlay {
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.3);
+  z-index: 1000;
+}
+
+#chatContainer {
+  width: 100%;
+  max-width: 320px;
+  background: #f0f8ff;
+  margin-top: 10px;
+  padding: 10px;
+  border-radius: 10px;
+  box-sizing: border-box;
+}
+
+#chatMessages {
+  max-height: 150px;
+  overflow-y: auto;
+  background: white;
+  padding: 8px;
+  border-radius: 6px;
+  margin-bottom: 5px;
+  font-size: 0.9rem;
+}
+
+#chatInput {
+  width: calc(100% - 80px);
+  padding: 10px;
+  border-radius: 6px;
+  border: 1px solid #90caf9;
+  margin-right: 5px;
+  box-sizing: border-box;
+}
+
+#chatSendBtn {
+  padding: 10px;
+  font-size: 0.95rem;
+}
+
+footer {
+  position: absolute;
+  bottom: 10px;
+  width: 100%;
+  text-align: center;
+  color: #1565c0;
+  font-weight: bold;
+}
+
+/* Responsive Fixes */
+@media (max-width: 480px) {
+  h1 {
+    font-size: 1.5rem;
+  }
+
+  #status,
+  #opponentName {
+    font-size: 1rem;
+  }
+
+  .cell {
+    font-size: 2rem;
+  }
+
+  button {
+    padding: 10px;
+    font-size: 0.95rem;
+  }
+
+  #chatInput {
+    width: calc(100% - 75px);
+  }
+
+  footer {
+    font-size: 0.8rem;
+  }
+}

@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>G.K GAME</title>
+<style>
+  :root {
+    --blue-main: #1565c0;
+    --blue-light: #bbdefb;
+    --blue-bg: #e3f2fd;
+    --blue-dark: #0d47a1;
+  }
+
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: var(--blue-bg);
+    margin: 0;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: #222;
+    user-select: none;
+    min-height: 100vh;
+    box-sizing: border-box;
+  }
+
+  h1 {
+    color: var(--blue-main);
+    font-size: 2.5rem;
+    text-align: center;
+    margin-bottom: 20px;
+  }
+
+  button {
+    font-family: inherit;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    user-select: none;
+    transition: background-color 0.3s ease, transform 0.15s ease;
+  }
+
+  button:hover {
+    transform: scale(1.03);
+  }
+
+  nav {
+    width: 100%;
+    max-width: 1000px;
+    background: var(--blue-light);
+    padding: 10px 20px;
+    box-sizing: border-box;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  }
+
+  .nav-buttons {
+    display: none;
+    position: absolute;
+    top: 70px;
+    right: 20px;
+    background: var(--blue-bg);
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    flex-direction: column;
+    gap: 8px;
+    padding: 12px;
+    z-index: 100;
+  }
+
+  .nav-buttons button {
+    background: var(--blue-main);
+    color: white;
+    padding: 10px 20px;
+  }
+
+  #hamburgerBtn {
+    background: none;
+    font-size: 24px;
+    color: var(--blue-main);
+  }
+
+  #modeSelection {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  #modeSelection button {
+    padding: 15px 35px;
+    font-size: 1.2rem;
+    background: var(--blue-main);
+    color: white;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+  }
+
+  #offlinePopup {
+    display: none; /* HIDDEN BY DEFAULT */
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background: rgba(187, 222, 251, 0.95);
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    gap: 16px;
+    padding: 20px;
+  }
+
+  #offlinePopup button {
+    width: 220px;
+    padding: 16px;
+    font-size: 1.2rem;
+    background: var(--blue-main);
+    color: white;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    border-radius: 12px;
+  }
+
+  #game {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+  }
+
+  #status {
+    font-size: 1.4rem;
+    font-weight: 600;
+    color: var(--blue-dark);
+    margin-bottom: 10px;
+  }
+
+  #board {
+    display: grid;
+    grid-template-columns: repeat(3, 100px);
+    grid-template-rows: repeat(3, 100px);
+    gap: 10px;
+  }
+
+  .cell {
+    width: 100px;
+    height: 100px;
+    background: var(--blue-light);
+    border-radius: 12px;
+    font-size: 3rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    color: var(--blue-main);
+    box-shadow: inset 0 0 5px #90caf9;
+    transition: background-color 0.3s ease;
+  }
+
+  .cell:hover {
+    background-color: #90caf9;
+  }
+
+  #endGamePopup,
+  #messagePopup {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(21, 101, 192, 0.95);
+    color: white;
+    z-index: 1600;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 25px;
+    padding: 20px;
+    box-sizing: border-box;
+    text-align: center;
+    font-size: 2rem;
+    font-weight: 700;
+  }
+
+  #endGamePopup button,
+  #messagePopup button {
+    background: #bbdefb;
+    color: var(--blue-main);
+    font-size: 1.2rem;
+    padding: 14px 28px;
+    border-radius: 12px;
+  }
+
+  footer {
+    margin-top: auto;
+    padding-top: 30px;
+    font-size: 0.9rem;
+    color: var(--blue-main);
+    font-weight: 600;
+  }
+
+  /* Responsive */
+  @media (max-width: 480px) {
+    h1 {
+      font-size: 1.8rem;
+    }
+
+    #board {
+      grid-template-columns: repeat(3, 70px);
+      grid-template-rows: repeat(3, 70px);
+      gap: 8px;
+    }
+
+    .cell {
+      width: 70px;
+      height: 70px;
+      font-size: 2.2rem;
+    }
+
+    #modeSelection button,
+    #offlinePopup button {
+      padding: 12px 24px;
+      font-size: 1rem;
+      width: 160px;
+    }
+
+    #navButtonsContainer button {
+      font-size: 0.9rem;
+      padding: 8px 14px;
+    }
+
+    #messagePopup, #endGamePopup {
+      font-size: 1.5rem;
+      gap: 20px;
+    }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-title">G.K Tic Tac Toe</div>
+  <div id="navButtonsContainer" class="nav-buttons">
+    <button id="navAboutBtn">About Game</button>
+    <button id="navFeaturesBtn">Features</button>
+    <button id="navOnlineModeBtn">Online Mode</button>
+    <button id="navInstagramBtn">Instagram</button>
+    <button id="navYoutubeBtn">YouTube</button>
+    <button id="navGmailBtn">Gmail</button>
+  </div>
+  <button id="hamburgerBtn">&#9776;</button>
+</nav>
+
+<h1>Welcome to Tic Tac Toe</h1>
+
+<div id="modeSelection">
+  <button onclick="clickSound(); selectOffline()">Offline</button>
+  <button onclick="clickSound(); selectOnline()">Online</button>
+</div>
+
+<div id="offlinePopup">
+  <h2 style="color:#1565c0;">Choose Offline Mode</h2>
+  <button onclick="clickSound(); startOfflineGame('2player')">2 Player</button>
+  <button onclick="clickSound(); startOfflineGame('computer')">Computer</button>
+  <button onclick="clickSound(); closeOfflinePopup()">Close</button>
+</div>
+
+<div id="game">
+  <div id="status">Player X's turn</div>
+  <div id="board">
+    <div class="cell" data-index="0"></div>
+    <div class="cell" data-index="1"></div>
+    <div class="cell" data-index="2"></div>
+    <div class="cell" data-index="3"></div>
+    <div class="cell" data-index="4"></div>
+    <div class="cell" data-index="5"></div>
+    <div class="cell" data-index="6"></div>
+    <div class="cell" data-index="7"></div>
+    <div class="cell" data-index="8"></div>
+  </div>
+</div>
+
+<div id="endGamePopup">
+  <div id="endGameMessage"></div>
+  <button id="playAgainBtn">Play Again</button>
+  <button id="exitBtn">Exit</button>
+</div>
+
+<div id="messagePopup">
+  <div id="messagePopupText"></div>
+  <button id="messagePopupCloseBtn">Close</button>
+</div>
+
+<footer>Created by G.K</footer>
+<audio id="clickAudio" src="select-001-337218.mp3" preload="auto"></audio>
+
+<script>
+  let mode = null;
+  let board = ["", "", "", "", "", "", "", "", ""];
+  let currentPlayer = "X";
+  let gameActive = false;
+
+  const statusDisplay = document.getElementById('status');
+  const boardElem = document.getElementById('board');
+  const cells = document.querySelectorAll('.cell');
+  const gameDiv = document.getElementById('game');
+  const offlinePopup = document.getElementById('offlinePopup');
+  const modeSelection = document.getElementById('modeSelection');
+  const endGamePopup = document.getElementById('endGamePopup');
+  const endGameMessage = document.getElementById('endGameMessage');
+  const playAgainBtn = document.getElementById('playAgainBtn');
+  const exitBtn = document.getElementById('exitBtn');
+  const clickAudio = document.getElementById('clickAudio');
+
+  const navAboutBtn = document.getElementById('navAboutBtn');
+  const navFeaturesBtn = document.getElementById('navFeaturesBtn');
+  const navOnlineModeBtn = document.getElementById('navOnlineModeBtn');
+  const navInstagramBtn = document.getElementById('navInstagramBtn');
+  const navYoutubeBtn = document.getElementById('navYoutubeBtn');
+  const navGmailBtn = document.getElementById('navGmailBtn');
+  const hamburgerBtn = document.getElementById('hamburgerBtn');
+  const navButtonsContainer = document.getElementById('navButtonsContainer');
+
+  const messagePopup = document.getElementById('messagePopup');
+  const messagePopupText = document.getElementById('messagePopupText');
+  const messagePopupCloseBtn = document.getElementById('messagePopupCloseBtn');
+
+  // Play click sound
+  function clickSound() {
+    clickAudio.currentTime = 0;
+    clickAudio.play();
+  }
+
+  // Show offline popup and hide mode selection
+  function selectOffline() {
+    modeSelection.style.display = 'none';
+    offlinePopup.style.display = 'flex';
+  }
+
+  // Close offline popup and show mode selection
+  function closeOfflinePopup() {
+    offlinePopup.style.display = 'none';
+    modeSelection.style.display = 'flex';
+  }
+
+  // Go to online mode (for demo, goes to about.html)
+  function selectOnline() {
+    modeSelection.style.display = 'none';
+    window.location.href = 'about.html';
+  }
+
+  // Start offline game with selected mode
+  function startOfflineGame(selectedMode) {
+    mode = selectedMode;
+    offlinePopup.style.display = 'none';
+    gameDiv.style.display = 'flex';
+    resetBoard();
+    gameActive = true;
+    currentPlayer = "X";
+    updateStatus(`Player ${currentPlayer}'s turn`);
+    if (mode === 'computer' && currentPlayer === "O") {
+      computerMove();
+    }
+  }
+
+  // Reset the game board UI and internal state
+  function resetBoard() {
+    board = ["", "", "", "", "", "", "", "", ""];
+    cells.forEach(cell => {
+      cell.textContent = "";
+      cell.style.pointerEvents = "auto";
+    });
+  }
+
+  // Update the status text above the board
+  function updateStatus(message) {
+    statusDisplay.textContent = message;
+  }
+
+  // Handle clicking on a cell
+  function handleCellClick(e) {
+    if (!gameActive) return;
+    const index = e.target.getAttribute('data-index');
+    if (board[index] !== "") return;
+    makeMove(index, currentPlayer);
+    if (checkWinner(board, currentPlayer)) {
+      showEndGamePopup(`Player ${currentPlayer} wins!`);
+      endGame();
+      return;
+    }
+    if (isDraw()) {
+      showEndGamePopup(`It's a draw!`);
+      endGame();
+      return;
+    }
+    currentPlayer = currentPlayer === "X" ? "O" : "X";
+    updateStatus(`Player ${currentPlayer}'s turn`);
+
+    if (mode === 'computer' && currentPlayer === "O") {
+      computerMove();
+    }
+  }
+
+  // Make a move on the board array and update UI
+  function makeMove(index, player) {
+    board[index] = player;
+    cells[index].textContent = player;
+    cells[index].style.pointerEvents = "none";
+  }
+
+  // Simple AI for computer move (random empty cell)
+  function computerMove() {
+    let available = [];
+    board.forEach((val, i) => {
+      if (val === "") available.push(i);
+    });
+    if (available.length === 0) return;
+    const move = available[Math.floor(Math.random() * available.length)];
+    setTimeout(() => {
+      makeMove(move, "O");
+      if (checkWinner(board, "O")) {
+        showEndGamePopup(`Player O wins!`);
+        endGame();
+        return;
+      }
+      if (isDraw()) {
+        showEndGamePopup(`It's a draw!`);
+        endGame();
+        return;
+      }
+      currentPlayer = "X";
+      updateStatus(`Player X's turn`);
+    }, 400);
+  }
+
+  // Check if current player has won
+  function checkWinner(board, player) {
+    const winningCombos = [
+      [0,1,2], [3,4,5], [6,7,8], // rows
+      [0,3,6], [1,4,7], [2,5,8], // columns
+      [0,4,8], [2,4,6]           // diagonals
+    ];
+    return winningCombos.some(combo => 
+      combo.every(index => board[index] === player)
+    );
+  }
+
+  // Check if the game is draw
+  function isDraw() {
+    return board.every(cell => cell !== "");
+  }
+
+  // Show end game popup with message
+  function showEndGamePopup(message) {
+    endGameMessage.textContent = message;
+    endGamePopup.style.display = 'flex';
+  }
+
+  // End the game - disable clicks and mark game inactive
+  function endGame() {
+    gameActive = false;
+    cells.forEach(cell => {
+      cell.style.pointerEvents = 'none';
+    });
+  }
+
+  // Restart the game after Play Again
+  function restartGame() {
+    endGamePopup.style.display = 'none';
+    if (mode) {
+      resetBoard();
+      gameActive = true;
+      currentPlayer = "X";
+      updateStatus(`Player ${currentPlayer}'s turn`);
+      gameDiv.style.display = 'flex';
+      if (mode === 'computer' && currentPlayer === "O") {
+        computerMove();
+      }
+    } else {
+      // no mode selected? show modeSelection
+      modeSelection.style.display = 'flex';
+      gameDiv.style.display = 'none';
+    }
+  }
+
+  // Exit the game, back to mode selection
+  function exitGame() {
+    endGamePopup.style.display = 'none';
+    gameDiv.style.display = 'none';
+    modeSelection.style.display = 'flex';
+    mode = null;
+  }
+
+  // Toggle hamburger menu
+  hamburgerBtn.addEventListener('click', () => {
+    if (navButtonsContainer.style.display === 'flex') {
+      navButtonsContainer.style.display = 'none';
+    } else {
+      navButtonsContainer.style.display = 'flex';
+    }
+  });
+
+  // About button - show a message popup
+  // About button - show updated about message
+navAboutBtn.addEventListener('click', () => {
+  showMessagePopup(`This Tic Tac Toe game offers both online and offline modes, allowing players to enjoy classic gameplay either by challenging friends over the internet or playing locally on the same device. The intuitive interface and smooth controls make it easy for users of all ages to jump right into the fun. Whether you want to compete against a real opponent online or enjoy a quick game offline, this game has got you covered. Created by G.K., it combines simplicity and excitement in one timeless classic.`);
+  navButtonsContainer.style.display = 'none';
+});
+
+navFeaturesBtn.addEventListener('click', () => {
+  showMessagePopup(`
+  
+Offline Mode Support karta hai 2 players ko ek saath local multiplayer mein.
+
+Aap computer (AI) ke khilaf bhi khel sakte hain agar aapko opponent chahiye.
+
+Perfect hai ghar par doston ya family ke saath maza karne ke liye.
+
+Online Mode  Players apne liye ek room create kar sakte hain ya dusre players ke rooms join kar sakte hain.
+
+Real-time multiplayer gameplay jisme players duniya bhar ke logon ke saath khel sakte hain.
+
+In-built real-time chat system hai, jisse players apni strategies discuss kar sakte hain aur communicate kar sakte hain.`);
+  navButtonsContainer.style.display = 'none';
+});
+
+
+  // Online Mode button - redirect to about.html for now
+  navOnlineModeBtn.addEventListener('click', () => {
+    window.location.href = 'about.html';
+  });
+
+  // Instagram button
+  navInstagramBtn.addEventListener('click', () => {
+    window.open('https://www.instagram.com/it_lonely.boy?igsh=MTN4OXFqdmZmb2o%3D', '_blank');
+  });
+
+  // YouTube button
+  navYoutubeBtn.addEventListener('click', () => {
+    window.open('https://youtube.com/@beatball2007?si=xXJxgdSbO5lUVOH5', '_blank');
+  });
+
+  // Gmail button
+  navGmailBtn.addEventListener('click', () => {
+    window.open('gyangupta16368@gmail.com');
+  });
+
+  // Show message popup with text
+  function showMessagePopup(text) {
+    messagePopupText.textContent = text;
+    messagePopup.style.display = 'flex';
+  }
+
+  // Close message popup
+  messagePopupCloseBtn.addEventListener('click', () => {
+    messagePopup.style.display = 'none';
+  });
+
+  // Play again button
+  playAgainBtn.addEventListener('click', () => {
+    clickSound();
+    restartGame();
+  });
+
+  // Exit button
+  exitBtn.addEventListener('click', () => {
+    clickSound();
+    exitGame();
+  });
+
+  // Add click listeners to cells
+  cells.forEach(cell => {
+    cell.addEventListener('click', (e) => {
+      clickSound();
+      handleCellClick(e);
+    });
+  });
+
+  // On page load: set all popups hidden and modeSelection visible
+  window.onload = () => {
+    offlinePopup.style.display = 'none';
+    modeSelection.style.display = 'flex';
+    gameDiv.style.display = 'none';
+    endGamePopup.style.display = 'none';
+    messagePopup.style.display = 'none';
+    navButtonsContainer.style.display = 'none';
+  };
+</script>
+</body>
+</html>

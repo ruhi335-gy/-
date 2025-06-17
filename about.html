@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>G.K GAMES</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <h1>Online Tic Tac Toe</h1>
+
+  <div id="createRoomSection">
+    <input type="text" id="playerNameInput" placeholder="Enter your name" maxlength="20" />
+    <input type="text" id="roomCodeInput" placeholder="Enter room code" maxlength="10" />
+    <button id="btnCreateRoom">Create Room</button>
+    <button id="btnJoinRoom">Join Room</button>
+  </div>
+
+  <div id="status">Please create or join a room</div>
+  <div id="opponentName"></div>
+
+  <div id="board" style="display:none;">
+    <div class="cell" data-index="0"></div>
+    <div class="cell" data-index="1"></div>
+    <div class="cell" data-index="2"></div>
+    <div class="cell" data-index="3"></div>
+    <div class="cell" data-index="4"></div>
+    <div class="cell" data-index="5"></div>
+    <div class="cell" data-index="6"></div>
+    <div class="cell" data-index="7"></div>
+    <div class="cell" data-index="8"></div>
+  </div>
+
+  <div id="chatContainer" style="display:none;">
+    <div id="chatMessages"></div>
+    <input type="text" id="chatInput" placeholder="Type a message..." />
+    <button id="chatSendBtn">Send</button>
+  </div>
+
+  <div id="popup">
+    <p id="popupMsg"></p>
+    <button id="btn-replay">Play Again</button>
+    <button id="btn-confirm" style="display:none;">Yes</button>
+    <button id="btn-reject" style="display:none;">No</button>
+    <button id="btn-feedback">Feedback</button>
+  </div>
+
+  <div id="overlay"></div>
+
+  <audio id="clickSound" src="select-001-337218.mp3" preload="auto"></audio>
+
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+  <script src="script.js"></script>
+
+  <footer>Created by G.K</footer>
+</body>
+</html>
