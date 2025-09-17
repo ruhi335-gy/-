@@ -1,12 +1,13 @@
 // Firebase config & init
 const firebaseConfig = {
-  apiKey: "AIzaSyBNpThlmHtIDt_mICPHqG34ZNLin0oMD-Q",
-  authDomain: "tic-tok-1a34a.firebaseapp.com",
-  databaseURL: "https://tic-tok-1a34a-default-rtdb.firebaseio.com",
-  projectId: "tic-tok-1a34a",
-  storageBucket: "tic-tok-1a34a.appspot.com",
-  messagingSenderId: "397851490897",
-  appId: "1:397851490897:web:6e6eba5eda9d68ac0d9670"
+  apiKey: "AIzaSyAiGJjHOzDxHJ2ouQTH2qUng2qA0EgafII",
+  authDomain: "tik-tok-ed81f.firebaseapp.com",
+  databaseURL: "https://tik-tok-ed81f-default-rtdb.firebaseio.com",
+  projectId: "tik-tok-ed81f",
+  storageBucket: "tik-tok-ed81f.firebasestorage.app",
+  messagingSenderId: "5346923427",
+  appId: "1:5346923427:web:29faf78bb7119330f74016",
+  measurementId: "G-JN334NPY7E"
 };
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
@@ -300,3 +301,4 @@ function updateChatUI(messages) {
   });
   chatMessages.scrollTop = chatMessages.scrollHeight;
 }
+
